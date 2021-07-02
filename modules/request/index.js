@@ -4,17 +4,6 @@ import { sleep } from "../utils.js";
 
 const requestUrl = "http://api.fanyi.baidu.com/api/trans/vip/translate";
 
-// const request = (data, onSuccess) => {
-// 需要引入jq: <script src="http://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
-// 	$.ajax({
-// 		url: requestUrl,
-// 		type: "get",
-// 		dataType: "jsonp",
-// 		data,
-// 		success: onSuccess,
-// 	});
-// };
-
 const request = async (data) => {
 	// 用location.search方式发送jsonp请求
 	// 首先把data对象转为location.search的urlSearch
@@ -44,7 +33,8 @@ async function baiduTrans({ appid, key, query, from, to }) {
 	// 延迟1001ms再开始请求，避免请求限制...
 	await sleep(1001);
 	const result = await request(data, {
-		timeout: 10000});
+		timeout: 10000,
+	});
 	console.log(result);
 	return result.trans_result;
 }
