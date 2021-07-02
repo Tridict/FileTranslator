@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en zh-Hans">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>文件翻译</title>
+		<link href="./dist/css/bootstrap.min.css" rel="stylesheet" />
+		<style>
+			.output-area {
+				border: solid 1px rgb(212, 212, 212);
+				border-radius: 3px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="container pt-5 text-center">
+				<div class="row">
+					<div><h2>md文件翻译（通过百度翻译API）</h2></div>
+				</div>
+			</div>
+			<div>
+				<label
+					>App ID:
+					<input type="text" placeholder="请输入App ID" v-model="appid" />
+				</label>
+				<label>
+					Key:
+					<input type="text" placeholder="请输入key" v-model="key" />
+				</label>
+			</div>
+			<div class="input-group">
+				<label for="file-input">上传md文件：</label>
+				<input
+					class="form-control"
+					type="file"
+					id="file-input"
+					ref="fileInput"
+					multiple
+				/>
+				<button class="btn btn-primary" type="button" @click="onImportFiles">
+					📥 Import
+				</button>
+			</div>
+			<div class="file-box" v-for="(file, index) in files" :key="index">
+				<div class="input-group">
+					<button type="button" class="btn-close" aria-label="Close" @click="onRemoveFile(index)"></button>
+					<span>{{file.name}}</span>
+					<select class="form-select" v-model="from">
+						<option value="auto">自动检测</option>
+						<option value="en">英文</option>
+						<option value="zh">中文</option>
+					</select>
+					➡️
+					<select class="form-select" v-model="to">
+						<option value="en">英文</option>
+						<option value="zh">中文</option>
+					</select>
+
+					<button class="btn btn-primary" type="button" @click="onTranslate(file)">
+						翻译
+					</button>
+					<a :download="file.name" :href="getDownloadLink(file.result)">
+						<button class="btn btn-primary" type="button">下载</button>
+					</a>
+				</div>
+				<div class="row">
+					<div class="col">
+						<textarea
+							class="form-control"
+							v-model="file.content"
+							rows="10"
+						></textarea>
+					</div>
+					<div class="col output-area">
+						<pre>{{file.result}}</pre>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="./dist/js/store.legacy.min.js"></script>
+		<script src="./dist/js/vue.global.prod.js"></script>
+		<script src="./main.js" type="module"></script>
+	</body>
+</html>
