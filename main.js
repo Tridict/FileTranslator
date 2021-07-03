@@ -52,15 +52,20 @@ const RootComponent = {
 		},
 		async onTranslate(file) {
 			if (!file.content) return;
-			const arr = [];
+			const result = [];
+			const dst = [];
 			for (const batch of splitFile(file.content)) {
-				arr.push(await this.translateBatch(batch));
+				const x = await this.translateBatch(batch);
+				result.push(x[0]);
+				dst.push(x[1]);
 			}
-			file.result = arr.join("\n");
+			file.dst = dst.join("\n");
+			file.result = result.join("\n");
 		},
 		async translateBatch(query) {
 			if (!query) return [];
 			const result = [];
+			const dst = [];
 			let response = await baiduTrans({
 				appid: this.appid,
 				key: this.key,
@@ -69,9 +74,11 @@ const RootComponent = {
 				to: this.to,
 			});
 			while (response.length) {
-				result.push(response.shift().dst);
+				const x = response.shift();
+				result.push([x.src, x.dst]);
+				dst.push(x.dst);
 			}
-			return result.join("\n");
+			return [result.flat().join("\n"), dst.join("\n")];
 		},
 
 		readDataFromStorage() {

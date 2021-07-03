@@ -2,7 +2,7 @@ import MD5 from "./md5.js";
 import fetchJsonp from "./fetchJsonp.js";
 import { sleep } from "../utils.js";
 
-const requestUrl = "http://api.fanyi.baidu.com/api/trans/vip/translate";
+const requestUrl = "https://api.fanyi.baidu.com/api/trans/vip/translate";
 
 const request = async (data) => {
 	// 用location.search方式发送jsonp请求
