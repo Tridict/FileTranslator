@@ -1,71 +1,68 @@
 <!DOCTYPE html>
-<html lang="en zh-Hans">
+<html lang="zh-Hans">
 	<head>
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="在线的文件翻译小工具，可以翻译markdown文件，并保存为.md格式。">
 		<title>文件翻译</title>
-		<link href="./dist/css/bootstrap.min.css" rel="stylesheet" />
-		<style>
-			.output-area {
-				border: solid 1px rgb(212, 212, 212);
-				border-radius: 3px;
-			}
-		</style>
+		<!-- <link rel="icon" href="./favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" /> -->
+		<!-- <link href="./dist/css/bootstrap.min.css" rel="stylesheet" /> -->
+		<link href="./style/style.css" rel="stylesheet" />
 	</head>
 	<body>
 		<div id="app">
-			<div class="container pt-5 text-center">
-				<div class="row">
-					<div><h2>md文件翻译（通过百度翻译API）</h2></div>
+			<header>
+				<h1>文件翻译</h1>
+				<div class="description">
+					<p>基于百度翻译api的文件翻译小工具，请到<a href="https//fanyi-api.baidu.com">百度翻译</a>申请AppId和Key。</p>
+					<p>目前支持格式：txt、md</p>
 				</div>
-			</div>
-			<div>
-				<label
-					>App ID:
+			</header>
+			<main>
+			<!-- 输入appid和key -->
+			<div class="row">
+				<label>App ID:
 					<input type="text" placeholder="请输入App ID" v-model="appid" />
 				</label>
-				<label>
-					Key:
+				<label>Key:
 					<input type="text" placeholder="请输入key" v-model="key" />
 				</label>
 			</div>
-			<div class="input-group">
-				<label for="file-input">上传md文件：</label>
-				<input
-					class="form-control"
-					type="file"
-					id="file-input"
-					ref="fileInput"
-					multiple
-				/>
-				<button class="btn btn-primary" type="button" @click="onImportFiles">
-					📥 Import
-				</button>
-			</div>
+
+			<!-- 翻译区域 -->
 			<div class="file-box" v-for="(file, index) in files" :key="index">
-				<div class="input-group">
-					<button type="button" class="btn-close" aria-label="Close" @click="onRemoveFile(index)"></button>
-					<span>{{file.name}}</span>
-					<select class="form-select" v-model="from">
+				<button type="button" class="btn-close" aria-label="Close" @click="onRemoveFile(index)"></button>
+				<span class = "file-name">{{file.name}}</span>
+				<div class="row">
+					<!-- 选择语言 -->
+					<select v-model="from">
 						<option value="auto">自动检测</option>
-						<option value="en">英文</option>
-						<option value="zh">中文</option>
+						<option v-for="(lan, index) in languages" :key="index" :value="lan.code">{{lan.name}}</option>
 					</select>
-					➡️
-					<select class="form-select" v-model="to">
-						<option value="en">英文</option>
-						<option value="zh">中文</option>
+					<span>➡️</span>
+					<select v-model="to">
+						<option v-for="(lan, index) in languages" :key="index" :value="lan.code">{{lan.name}}</option>
 					</select>
 
+					<!-- 翻译按钮 -->
 					<button class="btn btn-primary" type="button" @click="onTranslate(file)">
 						翻译
 					</button>
-					<a :download="file.name" :href="getDownloadLink(file.result)">
-						<button class="btn btn-primary" type="button">下载</button>
+
+					<div class="download-options">
+						<a :download="file.name" :href="getDownloadLink(file.dst)">
+							<button class="btn btn-primary" type="button">保存译文</button>
+						</a>
+						<a :download="file.name" :href="getDownloadLink(file.result)">
+							<button class="btn btn-primary" type="button">保存双语</button>
+					</div>
 					</a>
 				</div>
-				<div class="row">
+
+				<!-- 翻译文本预览区域 -->
+				<div class="txt-area">
 					<div class="col">
 						<textarea
 							class="form-control"
@@ -78,6 +75,26 @@
 					</div>
 				</div>
 			</div>
+			
+			<!-- 上传文件 -->
+			<div class="row">
+				<label for="file-input">上传md文件：</label>
+				<input
+					class="form-control"
+					type="file"
+					id="file-input"
+					ref="fileInput"
+					multiple
+				/>
+				<button class="btn btn-primary" type="button" @click="onImportFiles">
+					📥 Import
+				</button>
+			</div>
+			<div class="dragger-wrap">
+				<div class="dragger">把文件拖到此处</div>
+			</div>
+
+		</main>
 		</div>
 		<script src="./dist/js/store.legacy.min.js"></script>
 		<script src="./dist/js/vue.global.prod.js"></script>

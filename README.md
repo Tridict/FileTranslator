@@ -4,5 +4,8 @@
 
 [项目预览地址](https://tridict.github.io/FileTranslator/)
 
-[百度翻译API地址](https://fanyi-api.baidu.com)
+[百度翻译API文档](https://fanyi-api.baidu.com/doc/21)
 
+> 百度翻译API限制：
+  - QPS = 1
+  - 单次翻译文本长度为6000字节以内（汉字约为2000个字符）
