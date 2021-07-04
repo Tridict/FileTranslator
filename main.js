@@ -4,6 +4,14 @@ import pushAlert from "./modules/alert.js";
 import { splitFile } from "./modules/utils.js";
 import stores from "./modules/stores.js";
 
+function encode(str) {
+	return str.replaceAll("\n\n", "\n#00#")
+}
+
+function decode(str) {
+	return str.replaceAll("\n#00#", "\n\n")
+}
+
 const RootComponent = {
 	data() {
 		return {
@@ -13,6 +21,7 @@ const RootComponent = {
 			to: "zh",
 			files: [],
 			languages: [],
+			isTranslating: false,
 			savedFields: ["appid", "key"],
 			tmpSaveFields: ["from", "to", "files"],
 		};
@@ -20,6 +29,7 @@ const RootComponent = {
 
 	methods: {
 		getDownloadLink(txt) {
+			// console.log(txt)
 			return "data:text/paint; utf-8," + encodeURIComponent(txt);
 		},
 		onImportFiles() {
@@ -63,6 +73,7 @@ const RootComponent = {
 		},
 		async onTranslate(file) {
 			if (!file.content) return;
+			this.isTranslating = true;
 			const result = [];
 			const dst = [];
 			for (const batch of splitFile(file.content)) {
@@ -70,21 +81,24 @@ const RootComponent = {
 				result.push(x[0]);
 				dst.push(x[1]);
 			}
-			file.dst = dst.join("\n");
-			file.result = result.join("\n");
-			alert("翻译完成！");
+			file.dst = decode(dst.join("\n"));
+			file.result = decode(result.join("\n"));
+			this.isTranslating = false;
 		},
 		async translateBatch(query) {
 			if (!query) return [];
 			const result = [];
 			const dst = [];
-			let response = await baiduTrans({
+			const response = await baiduTrans({
 				appid: this.appid,
 				key: this.key,
-				query,
+				query: encode(query),
 				from: this.from,
 				to: this.to,
 			});
+			// if (!response) {
+			// 	return ["", ""];
+			// }
 			while (response.length) {
 				const x = response.shift();
 				result.push([x.src, x.dst]);

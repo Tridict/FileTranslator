@@ -9,7 +9,7 @@
 		<!-- <link rel="icon" href="./favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" /> -->
 		<!-- <link href="./dist/css/bootstrap.min.css" rel="stylesheet" /> -->
-		<link href="./style/style.css" rel="stylesheet" />
+		<link rel="stylesheet" href="style/style.css">
 	</head>
 	<body>
 		<div id="app">
@@ -33,11 +33,13 @@
 
 			<!-- 翻译区域 -->
 			<div class="file-box" v-for="(file, index) in files" :key="index">
-				<button type="button" class="btn-close" aria-label="Close" @click="onRemoveFile(index)"></button>
-				<span class = "file-name">{{file.name}}</span>
+				<div class="row">
+					<button type="button" class="btn-close" aria-label="Close" @click="onRemoveFile(index)"></button>
+					<span class = "file-name">{{file.name}}</span>
+				</div>
 				<div class="row">
 					<!-- 选择语言 -->
-					<select v-model="from">
+					<select v-model="from" class="form-select">
 						<option value="auto">自动检测</option>
 						<option v-for="(lan, index) in languages" :key="index" :value="lan.code">{{lan.name}}</option>
 					</select>
@@ -47,25 +49,30 @@
 					</select>
 
 					<!-- 翻译按钮 -->
-					<button class="btn btn-primary" type="button" @click="onTranslate(file)">
-						翻译
+					<button class="btn btn-primary" type="button" 					:disabled="isTranslating" @click="onTranslate(file)">
+						<span v-if="isTranslating"
+							><i class="fas fa-spinner fa-pulse"></i></span
+						><span v-if="!isTranslating">翻译</span>
 					</button>
 
 					<div class="download-options">
-						<a :download="file.name" :href="getDownloadLink(file.dst)">
-							<button class="btn btn-primary" type="button">保存译文</button>
-						</a>
-						<a :download="file.name" :href="getDownloadLink(file.result)">
-							<button class="btn btn-primary" type="button">保存双语</button>
+						<div>
+							<a :download="file.name" :href="getDownloadLink(file.dst)">
+								<button class="btn btn-primary" type="button" :disabled="!file.dst">保存译文</button>
+							</a>
+						</div>
+						<div>
+							<a :download="file.name" :href="getDownloadLink(file.result)">
+								<button class="btn btn-primary" type="button">保存双语</button>
+							</a>
+						</div>
 					</div>
-					</a>
 				</div>
 
 				<!-- 翻译文本预览区域 -->
 				<div class="txt-area">
 					<div class="col">
 						<textarea
-							class="form-control"
 							v-model="file.content"
 							rows="10"
 						></textarea>
@@ -77,10 +84,9 @@
 			</div>
 			
 			<!-- 上传文件 -->
-			<div class="row">
+			<div class="row upload-box">
 				<label for="file-input">上传md文件：</label>
 				<input
-					class="form-control"
 					type="file"
 					id="file-input"
 					ref="fileInput"
