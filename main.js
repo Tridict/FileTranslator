@@ -19,6 +19,80 @@ const RootComponent = {
 	},
 
 	methods: {
+		getDownloadLink(txt) {
+			return "data:text/paint; utf-8," + encodeURIComponent(txt);
+		},
+		onImportFiles() {
+			const fileList = this.$refs.fileInput.files;
+			this.readFiles(fileList);
+		},
+		onDropFile(event) {
+			event.preventDefault();
+
+			if (event.type == "drop") {
+				const fileList = event.dataTransfer.files;
+				this.readFiles(fileList);
+			}
+		},
+		onRemoveFile(idx) {
+			this.files.splice(idx, 1);
+		},
+		readFiles(fileList) {
+			// 把文件保存为对象
+			for (const file of fileList) {
+				if (this.files.map((f) => f.name).includes(file.name)) {
+					pushAlert(`文件【${file.name}】重复。`);
+				} else {
+					// 用一个对象保存文件的meta信息
+					this.files.unshift({
+						obj: file,
+						name: file.name,
+						read: false,
+						encodingGot: false,
+						encoding: "utf-8",
+					});
+				}
+			}
+			// 读取文件内容
+			for (const file of this.files) {
+				if (file.read) continue;
+				readFile(file).catch(({ error }) => {
+					pushAlert(`${error}`, "warning", 5000);
+				});
+			}
+		},
+		async onTranslate(file) {
+			if (!file.content) return;
+			const result = [];
+			const dst = [];
+			for (const batch of splitFile(file.content)) {
+				const x = await this.translateBatch(batch);
+				result.push(x[0]);
+				dst.push(x[1]);
+			}
+			file.dst = dst.join("\n");
+			file.result = result.join("\n");
+			alert("翻译完成！");
+		},
+		async translateBatch(query) {
+			if (!query) return [];
+			const result = [];
+			const dst = [];
+			let response = await baiduTrans({
+				appid: this.appid,
+				key: this.key,
+				query,
+				from: this.from,
+				to: this.to,
+			});
+			while (response.length) {
+				const x = response.shift();
+				result.push([x.src, x.dst]);
+				dst.push(x.dst);
+			}
+			return [result.flat().join("\n"), dst.join("\n")];
+		},
+
 		initLanguages() {
 			const languageMap = {
 				en: "英语",
@@ -54,69 +128,6 @@ const RootComponent = {
 				this.languages.push({ code, name });
 			}
 		},
-		getDownloadLink(txt) {
-			return "data:text/paint; utf-8," + encodeURIComponent(txt);
-		},
-		onImportFiles() {
-			// 把文件保存为对象
-			const fileList = this.$refs.fileInput.files;
-			for (const file of fileList) {
-				if (this.files.map((f) => f.name).includes(file.name)) {
-					pushAlert(`文件【${file.name}】重复。`);
-				} else {
-					// 用一个对象保存文件的meta信息
-					this.files.unshift({
-						obj: file,
-						name: file.name,
-						read: false,
-						encodingGot: false,
-						encoding: "utf-8",
-					});
-				}
-			}
-			// 读取文件内容
-			for (const file of this.files) {
-				if (file.read) continue;
-				readFile(file).catch(({ error }) => {
-					pushAlert(`${error}`, "warning", 5000);
-				});
-			}
-		},
-		onRemoveFile(idx) {
-			this.files.splice(idx, 1);
-		},
-		async onTranslate(file) {
-			if (!file.content) return;
-			const result = [];
-			const dst = [];
-			for (const batch of splitFile(file.content)) {
-				const x = await this.translateBatch(batch);
-				result.push(x[0]);
-				dst.push(x[1]);
-			}
-			file.dst = dst.join("\n");
-			file.result = result.join("\n");
-			alert("翻译完成！");
-		},
-		async translateBatch(query) {
-			if (!query) return [];
-			const result = [];
-			const dst = [];
-			let response = await baiduTrans({
-				appid: this.appid,
-				key: this.key,
-				query,
-				from: this.from,
-				to: this.to,
-			});
-			while (response.length) {
-				const x = response.shift();
-				result.push([x.src, x.dst]);
-				dst.push(x.dst);
-			}
-			return [result.flat().join("\n"), dst.join("\n")];
-		},
-
 		readDataFromStorage() {
 			for (const field of [...this.savedFields, ...this.tmpSaveFields]) {
 				this[field] = stores.get(field) || this[field];
@@ -139,6 +150,10 @@ const RootComponent = {
 	mounted() {
 		this.readDataFromStorage();
 		this.initLanguages();
+		const dropbox = this.$refs.dropTarget;
+		dropbox.addEventListener("dragenter", this.onDropFile)
+		dropbox.addEventListener("dragover", this.onDropFile)
+		dropbox.addEventListener("drop", this.onDropFile)
 	},
 };
 

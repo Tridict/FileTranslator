@@ -23,6 +23,22 @@ input[type="file"] {
   border: 1px solid #ced4da;
   align-items: baseline;
   text-align: start;
+  overflow: hidden;
+}
+
+input[type="file"]::file-selector-button {
+  padding: .375rem .75rem;
+  margin: -.375rem -.75rem;
+  margin-inline-end: .75rem;
+  color: #212529;
+  background-color: #e9ecef;
+  pointer-events: none;
+  border-color: inherit;
+  border-style: solid;
+  border-width: 0;
+  border-inline-end-width: 1px;
+  border-radius: 0; 
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
 button {
@@ -39,11 +55,6 @@ select {
 .btn-close {
   height: 1.5rem;
   background: none;
-}
-
-body {
-	/* max-width: 90vw; */
-	margin: 0 auto;
 }
 
 #app {
@@ -81,13 +92,13 @@ main {
   padding: .2em .5em;
 }
 
-.dragger-wrap {
+.droptarget-wrap {
   display: flex;
   height: 30vh;
   width: 90vw;
 }
 
-.dragger {
+#droptarget {
   height: 80%;
   width: 100%;
   background: rgb(212, 212, 212);
@@ -128,10 +139,17 @@ main {
   width: 100%;
   justify-content: space-around;
   height: 5rem;
+  border: dashed 0 1px blue;
 }
 
 @media (min-width: 800px) {
 .txt-area {
   display: flex;
+}
+}
+
+@media (max-width: 1000px) {
+.droptarget-wrap {
+  display: none;
 }
 }
