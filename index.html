@@ -12,6 +12,7 @@
 		<!-- <link rel="icon" href="./favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" /> -->
 		<!-- <link href="./dist/css/bootstrap.min.css" rel="stylesheet" /> -->
+		<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
 		<link rel="stylesheet" href="style/style.css" />
 	</head>
 	<body>
@@ -75,6 +76,7 @@
 									{{lan.name}}
 								</option>
 							</select>
+							<!-- 翻译按钮 -->
 							<button
 								class="btn btn-primary"
 								type="button"
@@ -82,18 +84,20 @@
 								@click="onTranslate(file)"
 							>
 								<span v-if="isTranslating"
-									><i class="fas fa-spinner fa-pulse"></i></span
+									>
+									<!-- <i class="fas fa-spinner fa-pulse"></i> -->
+									正在翻译...
+									</span
 								><span v-if="!isTranslating">翻译</span>
 							</button>
 						</div>
 
-						<div class="col download-options">
+						<div v-if="file.result" class="col download-options">
 							<div>
 								<a :download="file.name" :href="getDownloadLink(file.dst)">
 									<button
 										class="btn btn-primary"
 										type="button"
-										:disabled="!file.dst"
 									>
 										保存译文
 									</button>
@@ -107,7 +111,6 @@
 								</a>
 							</div>
 						</div>
-						<!-- 翻译按钮 -->
 					</div>
 
 					<!-- 翻译文本预览区域 -->
