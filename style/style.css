@@ -19,10 +19,6 @@
 }
 
 /* 覆盖默认样式 */
-p {
-	margin: 0;
-}
-
 input[type="file"] {
 	align-items: baseline;
 	text-align: start;
@@ -151,7 +147,6 @@ textarea {
 	margin: 0;
 	padding: 0;
 	border-radius: 5px !important;
-	overflow: hidden;
 	/* color: var(--td-dark); */
 }
 
