@@ -12,7 +12,6 @@
 		<!-- <link rel="icon" href="./favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" /> -->
 		<!-- <link href="./dist/css/bootstrap.min.css" rel="stylesheet" /> -->
-		<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
 		<link rel="stylesheet" href="style/style.css" />
 	</head>
 	<body>
@@ -47,7 +46,7 @@
 					<div class="row">
 						<button
 							type="button"
-							class="btn-close"
+							class="btn-close icon"
 							aria-label="Close"
 							@click="onRemoveFile(index)"
 						></button>
@@ -78,36 +77,28 @@
 							</select>
 							<!-- 翻译按钮 -->
 							<button
-								class="btn btn-primary"
+								class="btn-translate"
 								type="button"
 								:disabled="isTranslating"
 								@click="onTranslate(file)"
 							>
-								<span v-if="isTranslating"
-									>
-									<!-- <i class="fas fa-spinner fa-pulse"></i> -->
-									正在翻译...
-									</span
-								><span v-if="!isTranslating">翻译</span>
+								<span v-if="isTranslating">
+									<i class="icon"></i>
+									<i class="loading icon"></i>
+								</span>
+								<span v-if="!isTranslating">翻译</span>
 							</button>
 						</div>
 
 						<div v-if="file.result" class="col download-options">
 							<div>
 								<a :download="file.name" :href="getDownloadLink(file.dst)">
-									<button
-										class="btn btn-primary"
-										type="button"
-									>
-										保存译文
-									</button>
+									<button type="button">保存译文</button>
 								</a>
 							</div>
 							<div>
 								<a :download="file.name" :href="getDownloadLink(file.result)">
-									<button class="btn btn-primary" type="button">
-										保存双语
-									</button>
+									<button type="button">保存双语</button>
 								</a>
 							</div>
 						</div>
@@ -128,9 +119,7 @@
 				<div class="row upload-box">
 					<label for="file-input">上传文件：</label>
 					<input type="file" id="file-input" ref="fileInput" multiple />
-					<button class="btn btn-primary" type="button" @click="onImportFiles">
-						📥 Import
-					</button>
+					<button type="button" @click="onImportFiles">📥 Import</button>
 				</div>
 				<div class="droptarget-wrap">
 					<div id="droptarget" ref="dropTarget">把文件拖到此处</div>
