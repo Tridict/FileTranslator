@@ -4,103 +4,135 @@
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="description" content="在线的文件翻译小工具，可以翻译markdown文件，并保存为.md格式。">
+		<meta
+			name="description"
+			content="在线的文件翻译小工具，可以翻译markdown文件，并保存为.md格式。"
+		/>
 		<title>文件翻译</title>
 		<!-- <link rel="icon" href="./favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" /> -->
 		<!-- <link href="./dist/css/bootstrap.min.css" rel="stylesheet" /> -->
-		<link rel="stylesheet" href="style/style.css">
+		<link rel="stylesheet" href="style/style.css" />
 	</head>
 	<body>
 		<div id="app">
 			<header>
 				<h1>文件翻译</h1>
 				<div class="description">
-					<p>基于百度翻译api的文件翻译小工具，请到<a href="https//fanyi-api.baidu.com">百度翻译</a>申请AppId和Key。</p>
+					<p>
+						基于百度翻译api的文件翻译小工具，请到<a
+							href="https//fanyi-api.baidu.com"
+							>百度翻译</a
+						>申请AppId和Key。
+					</p>
 					<p>目前支持格式：txt、md</p>
 				</div>
 			</header>
 			<main>
-			<!-- 输入appid和key -->
-			<div class="row">
-				<label>App ID:
-					<input type="text" placeholder="请输入App ID" v-model="appid" />
-				</label>
-				<label>Key:
-					<input type="text" placeholder="请输入key" v-model="key" />
-				</label>
-			</div>
-
-			<!-- 翻译区域 -->
-			<div class="file-box" v-for="(file, index) in files" :key="index">
+				<!-- 输入appid和key -->
 				<div class="row">
-					<button type="button" class="btn-close" aria-label="Close" @click="onRemoveFile(index)"></button>
-					<span class = "file-name">{{file.name}}</span>
+					<label
+						>App ID:
+						<input type="text" placeholder="请输入App ID" v-model="appid" />
+					</label>
+					<label
+						>Key:
+						<input type="text" placeholder="请输入key" v-model="key" />
+					</label>
 				</div>
-				<div class="row">
-					<!-- 选择语言 -->
-					<select v-model="from" class="form-select">
-						<option value="auto">自动检测</option>
-						<option v-for="(lan, index) in languages" :key="index" :value="lan.code">{{lan.name}}</option>
-					</select>
-					<span>➡️</span>
-					<select v-model="to">
-						<option v-for="(lan, index) in languages" :key="index" :value="lan.code">{{lan.name}}</option>
-					</select>
 
-					<!-- 翻译按钮 -->
-					<button class="btn btn-primary" type="button" 					:disabled="isTranslating" @click="onTranslate(file)">
-						<span v-if="isTranslating"
-							><i class="fas fa-spinner fa-pulse"></i></span
-						><span v-if="!isTranslating">翻译</span>
+				<!-- 翻译区域 -->
+				<div class="file-box" v-for="(file, index) in files" :key="index">
+					<div class="row">
+						<button
+							type="button"
+							class="btn-close"
+							aria-label="Close"
+							@click="onRemoveFile(index)"
+						></button>
+						<span class="file-name">{{file.name}}</span>
+					</div>
+					<div class="row-col">
+						<!-- 选择语言 -->
+						<div class="col">
+							<select v-model="from">
+								<option value="auto">自动检测</option>
+								<option
+									v-for="(lan, index) in languages"
+									:key="index"
+									:value="lan.code"
+								>
+									{{lan.name}}
+								</option>
+							</select>
+							<span>➡️</span>
+							<select v-model="to">
+								<option
+									v-for="(lan, index) in languages"
+									:key="index"
+									:value="lan.code"
+								>
+									{{lan.name}}
+								</option>
+							</select>
+							<button
+								class="btn btn-primary"
+								type="button"
+								:disabled="isTranslating"
+								@click="onTranslate(file)"
+							>
+								<span v-if="isTranslating"
+									><i class="fas fa-spinner fa-pulse"></i></span
+								><span v-if="!isTranslating">翻译</span>
+							</button>
+						</div>
+
+						<div class="col download-options">
+							<div>
+								<a :download="file.name" :href="getDownloadLink(file.dst)">
+									<button
+										class="btn btn-primary"
+										type="button"
+										:disabled="!file.dst"
+									>
+										保存译文
+									</button>
+								</a>
+							</div>
+							<div>
+								<a :download="file.name" :href="getDownloadLink(file.result)">
+									<button class="btn btn-primary" type="button">
+										保存双语
+									</button>
+								</a>
+							</div>
+						</div>
+						<!-- 翻译按钮 -->
+					</div>
+
+					<!-- 翻译文本预览区域 -->
+					<div class="txt-area row-col">
+						<div class="col">
+							<textarea v-model="file.content" rows="10"></textarea>
+						</div>
+						<div class="col output-area">
+							<pre>{{file.dst}}</pre>
+						</div>
+					</div>
+				</div>
+
+				<!-- 上传文件 -->
+				<div class="row upload-box">
+					<label for="file-input">上传文件：</label>
+					<input type="file" id="file-input" ref="fileInput" multiple />
+					<button class="btn btn-primary" type="button" @click="onImportFiles">
+						📥 Import
 					</button>
-
-					<div class="download-options">
-						<div>
-							<a :download="file.name" :href="getDownloadLink(file.dst)">
-								<button class="btn btn-primary" type="button" :disabled="!file.dst">保存译文</button>
-							</a>
-						</div>
-						<div>
-							<a :download="file.name" :href="getDownloadLink(file.result)">
-								<button class="btn btn-primary" type="button">保存双语</button>
-							</a>
-						</div>
-					</div>
 				</div>
-
-				<!-- 翻译文本预览区域 -->
-				<div class="txt-area">
-					<div class="col">
-						<textarea
-							v-model="file.content"
-							rows="10"
-						></textarea>
-					</div>
-					<div class="col output-area">
-						<pre>{{file.dst}}</pre>
-					</div>
+				<div class="droptarget-wrap">
+					<div id="droptarget" ref="dropTarget">把文件拖到此处</div>
 				</div>
-			</div>
-			
-			<!-- 上传文件 -->
-			<div class="row upload-box">
-				<label for="file-input">上传md文件：</label>
-				<input
-					type="file"
-					id="file-input"
-					ref="fileInput"
-					multiple
-				/>
-				<button class="btn btn-primary" type="button" @click="onImportFiles">
-					📥 Import
-				</button>
-			</div>
-			<div class="droptarget-wrap">
-				<div id="droptarget" ref="dropTarget">把文件拖到此处</div>
-			</div>
-
-		</main>
+			</main>
 		</div>
 		<script src="./dist/js/store.legacy.min.js"></script>
 		<script src="./dist/js/vue.global.prod.js"></script>
