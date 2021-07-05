@@ -3,6 +3,7 @@ import fetchJsonp from "./fetchJsonp.js";
 import { sleep } from "../utils.js";
 
 const requestUrl = "https://api.fanyi.baidu.com/api/trans/vip/translate";
+// const requestUrl = "https://fanyi-api.baidu.com/api/trans/vip/translate";
 
 const request = async (data) => {
 	// 用location.search方式发送jsonp请求
@@ -32,10 +33,14 @@ async function baiduTrans({ appid, key, query, from, to }) {
 	};
 	// 延迟1001ms再开始请求，避免请求限制...
 	await sleep(1001);
+	console.log(query.length);
 	const result = await request(data, {
 		timeout: 10000,
 	});
-	console.log(result);
+	// console.log(result);
+	if (!result.trans_result) {
+		throw new Error(result.error_msg);
+	}
 	return result.trans_result;
 }
 

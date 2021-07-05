@@ -1,5 +1,5 @@
 import readFile from "./modules/fileReader.js";
-import baiduTrans from "./modules/request/index.js";
+import baiduTrans from "./modules/request/request.js";
 import pushAlert from "./modules/alert.js";
 import { splitFile, encode, decode } from "./modules/utils.js";
 import stores from "./modules/stores.js";
@@ -13,7 +13,8 @@ const RootComponent = {
 			to: "zh",
 			files: [],
 			languages: [],
-			isTranslating: false,
+			canTranslate: true,
+			canSwap: false,
 			savedFields: ["appid", "key"],
 			tmpSaveFields: ["from", "to", "files"],
 		};
@@ -23,6 +24,11 @@ const RootComponent = {
 		getDownloadLink(txt) {
 			// console.log(txt)
 			return "data:text/paint; utf-8," + encodeURIComponent(txt);
+		},
+		onSwapLanguage(){
+			if (this.canSwap) {
+				[this.from, this.to] = [this.to, this.from];
+			}
 		},
 		onImportFiles() {
 			const fileList = this.$refs.fileInput.files;
@@ -65,17 +71,21 @@ const RootComponent = {
 		},
 		async onTranslate(file) {
 			if (!file.content) return;
-			this.isTranslating = true;
-			const result = [];
-			const dst = [];
-			for (const batch of splitFile(file.content)) {
-				const x = await this.translateBatch(batch);
-				result.push(x[0]);
-				dst.push(x[1]);
+			this.canTranslate = false;
+			try {
+				const result = [];
+				const dst = [];
+				for (const batch of splitFile(file.content)) {
+					const x = await this.translateBatch(batch);
+					result.push(x[0]);
+					dst.push(x[1]);
+				}
+				file.dst = decode(dst.join("\n"));
+				file.result = decode(result.join("\n"));
+			} catch (error) {
+				pushAlert(`${error}`, "warning", 5000);
+				this.canTranslate = true;
 			}
-			file.dst = decode(dst.join("\n"));
-			file.result = decode(result.join("\n"));
-			this.isTranslating = false;
 		},
 		async translateBatch(query) {
 			if (!query) return [];
@@ -88,9 +98,6 @@ const RootComponent = {
 				from: this.from,
 				to: this.to,
 			});
-			// if (!response) {
-			// 	return ["", ""];
-			// }
 			while (response.length) {
 				const x = response.shift();
 				result.push([x.src, x.dst]);
@@ -151,6 +158,11 @@ const RootComponent = {
 
 	updated() {
 		this.saveDataToStorage();
+		if (this.from == "auto") {
+			this.canSwap = false;
+		} else {
+			this.canSwap = true;
+		}
 	},
 
 	mounted() {

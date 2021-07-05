@@ -65,7 +65,12 @@
 									{{lan.name}}
 								</option>
 							</select>
-							<span>➡️</span>
+							<button
+								type="button"
+								class="btn-swap icon"
+								:disabled="!canSwap"
+								@click="onSwapLanguage"
+							></button>
 							<select v-model="to">
 								<option
 									v-for="(lan, index) in languages"
@@ -79,14 +84,14 @@
 							<button
 								class="btn-translate"
 								type="button"
-								:disabled="isTranslating"
+								:disabled="!canTranslate"
 								@click="onTranslate(file)"
 							>
-								<span v-if="isTranslating">
+								<span v-if="!canTranslate">
 									<i class="icon"></i>
 									<i class="loading icon"></i>
 								</span>
-								<span v-if="!isTranslating">翻译</span>
+								<span v-if="canTranslate">翻译</span>
 							</button>
 						</div>
 
