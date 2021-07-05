@@ -1,16 +1,8 @@
 import readFile from "./modules/fileReader.js";
 import baiduTrans from "./modules/request/index.js";
 import pushAlert from "./modules/alert.js";
-import { splitFile } from "./modules/utils.js";
+import { splitFile, encode, decode } from "./modules/utils.js";
 import stores from "./modules/stores.js";
-
-function encode(str) {
-	return str.replaceAll("\n\n", "\n#00#")
-}
-
-function decode(str) {
-	return str.replaceAll("\n#00#", "\n\n")
-}
 
 const RootComponent = {
 	data() {

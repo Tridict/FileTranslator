@@ -26,9 +26,21 @@ const splitFile = (str, lan="en") => {
   return strArr;
 }
 
+const encode = (str) => {
+	let newStr = str.replaceAll("# ", "##01#");
+	newStr = newStr.replaceAll("\n\n", "\n#00#");
+	return newStr;
+}
+
+const decode = (str) => {
+	let newStr = str.replaceAll("\n#00#", "\n\n")
+	newStr = newStr.replaceAll("##01#", "# ");
+	return newStr;
+}
+
 const sleep = (delayTime) =>
 	new Promise((resolve) => {
 		setTimeout(resolve, delayTime);
 	});
 
-export {splitFile, sleep};
+export {splitFile, encode, decode, sleep};
