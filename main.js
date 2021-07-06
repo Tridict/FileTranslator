@@ -22,9 +22,9 @@ const RootComponent = {
 	},
 
 	methods: {
-		onCloneResult(idx){
-			let toCopy = this.files[idx].displayResult;
-
+		onCloneResult(){
+			this.$refs.output.select(); // 选中output框的文本
+			document.execCommand("copy");
 		},
 		onToggleResult(idx){
 			this.isDisplayBothLanguage = !this.isDisplayBothLanguage;

@@ -100,19 +100,19 @@
 					<!-- 翻译文本预览区域 -->
 					<div class="txt-area row-col">
 						<div class="col output-area">
-							<textarea resize="none" v-model="file.content" rows="10"></textarea>
+							<textarea v-model="file.content" rows="10"></textarea>
 							<div class="col toolbar"></div>
 						</div>
 						<div class="col output-area">
 							<!-- <pre>{{file.displayResult}}</pre> -->
-							<textarea resize="none" disabled v-model="file.displayResult" rows="10"></textarea>
+							<textarea ref="output" readonly v-model="file.displayResult" rows="10"></textarea>
 							<div class="col toolbar">
 							<!-- <div v-if="file.result" class="col toolbar"> -->
 								<button
 									type="button"
 									class="btn-clone icon"
 									aria-label="Clone"
-									@click="onCloneResult(index)"
+									@click="onCloneResult"
 								></button>
 								<div class="right">
 									<div>
