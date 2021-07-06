@@ -134,8 +134,9 @@
 
 				<!-- 上传文件 -->
 				<div class="row upload-box">
-					<label for="file-input">上传文件：</label>
-					<input type="file" id="file-input" ref="fileInput" multiple />
+					<label>上传文件：
+						<input type="file" ref="fileInput" multiple />
+					</label>
 					<button type="button" @click="onImportFiles">📥 Import</button>
 				</div>
 				<div class="droptarget-wrap">

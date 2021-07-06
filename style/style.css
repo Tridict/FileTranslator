@@ -198,9 +198,6 @@ main, .description {
 	.row-col {
 		display: flex;
 	}
-	input[type="file"] {
-		flex: 1 0 0%;
-	}
 }
 
 .row-col > .col > *:not(:last-child) {
@@ -280,5 +277,14 @@ textarea[readonly] {
 	}
 	input[type="text"] {
 		max-width: 20vw;
+	}
+	input[type="file"] {
+		max-width: 35vw;
+	}
+}
+
+@media (max-width: 450px) {
+	input[type="file"] {
+		width: 44px;
 	}
 }
