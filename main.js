@@ -15,14 +15,26 @@ const RootComponent = {
 			languages: [],
 			canTranslate: true,
 			canSwap: false,
+			isDisplayBothLanguage: false,
 			savedFields: ["appid", "key"],
 			tmpSaveFields: ["from", "to", "files"],
 		};
 	},
 
 	methods: {
+		onCloneResult(idx){
+			let toCopy = this.files[idx].displayResult;
+
+		},
+		onToggleResult(idx){
+			this.isDisplayBothLanguage = !this.isDisplayBothLanguage;
+			if (this.isDisplayBothLanguage) {
+				this.files[idx].displayResult = this.files[idx].result;
+			} else {
+				this.files[idx].displayResult = this.files[idx].dst;
+			}
+		},
 		getDownloadLink(txt) {
-			// console.log(txt)
 			return "data:text/paint; utf-8," + encodeURIComponent(txt);
 		},
 		onSwapLanguage(){
@@ -82,8 +94,10 @@ const RootComponent = {
 				}
 				file.dst = decode(dst.join("\n"));
 				file.result = decode(result.join("\n"));
+				file.displayResult = file.dst;
 			} catch (error) {
 				pushAlert(`${error}`, "warning", 5000);
+			} finally {
 				this.canTranslate = true;
 			}
 		},
@@ -105,7 +119,6 @@ const RootComponent = {
 			}
 			return [result.flat().join("\n"), dst.join("\n")];
 		},
-
 		initLanguages() {
 			const languageMap = {
 				en: "英语",

@@ -95,27 +95,39 @@
 							</button>
 						</div>
 
-						<div v-if="file.result" class="col download-options">
-							<div>
-								<a :download="file.name" :href="getDownloadLink(file.dst)">
-									<button type="button">保存译文</button>
-								</a>
-							</div>
-							<div>
-								<a :download="file.name" :href="getDownloadLink(file.result)">
-									<button type="button">保存双语</button>
-								</a>
-							</div>
-						</div>
 					</div>
-
+					
 					<!-- 翻译文本预览区域 -->
 					<div class="txt-area row-col">
-						<div class="col">
-							<textarea v-model="file.content" rows="10"></textarea>
+						<div class="col output-area">
+							<textarea resize="none" v-model="file.content" rows="10"></textarea>
+							<div class="col toolbar"></div>
 						</div>
 						<div class="col output-area">
-							<pre>{{file.dst}}</pre>
+							<!-- <pre>{{file.displayResult}}</pre> -->
+							<textarea resize="none" disabled v-model="file.displayResult" rows="10"></textarea>
+							<div class="col toolbar">
+							<!-- <div v-if="file.result" class="col toolbar"> -->
+								<button
+									type="button"
+									class="btn-clone icon"
+									aria-label="Clone"
+									@click="onCloneResult(index)"
+								></button>
+								<div class="right">
+									<div>
+										<button type="button" @click="onToggleResult(index)">
+											<span v-if="isDisplayBothLanguage">只显示译文</span>
+											<span v-if="!isDisplayBothLanguage">双语显示</span>
+										</button>
+									</div>
+									<div>
+										<a :download="file.name" :href="getDownloadLink(file.displayResult)">
+											<button type="button">保存译文</button>
+										</a>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
